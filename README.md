@@ -40,10 +40,10 @@ The three-tier architecture diagram shows:
 U-FIN/
 │
 ├── Final_notebooks/
-│   ├── experimnet_tcn.ipynb          # Notebook 1: TCN temporal encoder
-│   ├── experiment_gat.ipynb          # Notebook 2: GAT graph encoder
-│   ├── experiment_catgnn.ipynb       # Notebook 3: CaT-GNN causal graph encoder
-│   └── experiment_fusion.ipynb       # Notebook 4: Gated Fusion + XGBoost (full pipeline)
+│   ├── training_tcn.ipynb          # Notebook 1: TCN temporal encoder
+│   ├── training_gat.ipynb          # Notebook 2: GAT graph encoder
+│   ├── training_catgnn.ipynb       # Notebook 3: CaT-GNN causal graph encoder
+│   └── training_fusion.ipynb       # Notebook 4: Gated Fusion + XGBoost (full pipeline)
 │
 ├── Final_Architecture.png            # Full system architecture diagram
 ├── README.md                         # This file
@@ -133,7 +133,7 @@ The notebooks must be run **in order** as each produces model weights consumed b
 
 ### Step 1 — TCN (Temporal Encoder)
 ```
-Final_notebooks/experimnet_tcn.ipynb
+Final_notebooks/training_tcn.ipynb
 ```
 - Trains a Temporal Convolutional Network on the 263-feature tabular dataset
 - **Outputs**: `v2_updated_configuration_200ep/models/tcn_fraud_best_model.weights.h5`, `tcn_scaler.pkl`
@@ -141,7 +141,7 @@ Final_notebooks/experimnet_tcn.ipynb
 
 ### Step 2 — GAT (Graph Encoder)
 ```
-Final_notebooks/experiment_gat.ipynb
+Final_notebooks/training_gat.ipynb
 ```
 - Constructs a GTAN-style transaction graph (4 relation types: uid, card1, P_emaildomain, DeviceInfo)
 - Trains a 2-layer Graph Attention Network (4 heads → 1 head, 64-d output)
@@ -150,7 +150,7 @@ Final_notebooks/experiment_gat.ipynb
 
 ### Step 3 — CaT-GNN (Causal Graph Encoder)
 ```
-Final_notebooks/experiment_catgnn.ipynb
+Final_notebooks/training_catgnn.ipynb
 ```
 - Trains a Causal Temporal GNN with causal inspector + causal intervener modules on the same graph
 - **Outputs**: `catgnn_results/models/catgnn_best.pt`, `catgnn_results/models/classifier_best.pt`
@@ -158,7 +158,7 @@ Final_notebooks/experiment_catgnn.ipynb
 
 ### Step 4 — Gated Attention Fusion + XGBoost (Full Pipeline)
 ```
-Final_notebooks/experiment_fusion.ipynb
+Final_notebooks/training_fusion.ipynb
 ```
 - Loads all three trained models and extracts embeddings
 - Trains Gated Attention Fusion (GAF) combining TCN + GAT + CaT-GNN embeddings
