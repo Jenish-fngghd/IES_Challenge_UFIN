@@ -1,0 +1,25 @@
+{
+  "best_epoch": 284,
+  "best_val_auc": 0.9373534294851911,
+  "best_val_f1": 0.6288416075650118,
+  "best_val_precision": 0.6877334099396725,
+  "best_val_recall": 0.579240261311396,
+  "optimal_threshold": 0.5588785588915361,
+  "confusion_matrix": [
+    [
+      112888,
+      1087
+    ],
+    [
+      1739,
+      2394
+    ]
+  ],
+  "n_train": 472432,
+  "n_val": 118108,
+  "in_dim": 263,
+  "hidden_dim": 64,
+  "num_heads": 4,
+  "graph_nodes": 590540,
+  "graph_edges": 5537638
+}

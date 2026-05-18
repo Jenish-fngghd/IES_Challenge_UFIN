@@ -1,0 +1,25 @@
+{
+  "FEDAVG": {
+    "algo": "FEDAVG",
+    "rounds": 20,
+    "upload_mb": 314.76095999999995,
+    "download_mb": 314.76095999999995,
+    "total_mb": 629.5219199999999
+  },
+  "FEDPROX": {
+    "algo": "FEDPROX",
+    "rounds": 20,
+    "upload_mb": 314.76095999999995,
+    "download_mb": 314.76095999999995,
+    "total_mb": 629.5219199999999
+  },
+  "FEDNOVA": {
+    "algo": "FEDNOVA",
+    "rounds": 20,
+    "upload_mb": 314.76095999999995,
+    "download_mb": 314.76095999999995,
+    "total_mb": 629.5219199999999
+  },
+  "model_mb": 5.246016,
+  "total_params": 1311504
+}

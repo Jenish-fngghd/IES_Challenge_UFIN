@@ -1,0 +1,27 @@
+{
+  "n_nodes": 590540,
+  "n_edges": 5537638,
+  "avg_degree": 9.377244555830258,
+  "relation_stats": {
+    "uid": {
+      "edges": 876631,
+      "skipped_large": 0,
+      "skipped_nan": 0
+    },
+    "card1": {
+      "edges": 1401931,
+      "skipped_large": 12,
+      "skipped_nan": 0
+    },
+    "P_emaildomain": {
+      "edges": 110715,
+      "skipped_large": 8,
+      "skipped_nan": 1
+    },
+    "DeviceInfo": {
+      "edges": 84272,
+      "skipped_large": 4,
+      "skipped_nan": 1
+    }
+  }
+}

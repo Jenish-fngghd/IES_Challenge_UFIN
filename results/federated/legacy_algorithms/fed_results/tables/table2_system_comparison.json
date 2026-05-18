@@ -1,0 +1,58 @@
+{
+  "rows": [
+    {
+      "setting": "Centralized (no FL)",
+      "auc": NaN,
+      "f1": null,
+      "precision": null,
+      "recall": null,
+      "privacy": "None",
+      "data_sharing": "Full data pooled"
+    },
+    {
+      "setting": "FL-Best (FEDNOVA)",
+      "auc": 0.8882458337063848,
+      "f1": 0.46078050045377933,
+      "precision": 0.4963687150837989,
+      "recall": 0.4299540285506896,
+      "privacy": "Gradients",
+      "data_sharing": "Weights only"
+    },
+    {
+      "setting": "FL-FedAvg",
+      "auc": 0.8875010931493832,
+      "f1": 0.4737638748738648,
+      "precision": 0.49486166007905136,
+      "recall": 0.45439148318412775,
+      "privacy": "Gradients",
+      "data_sharing": "Weights only"
+    },
+    {
+      "setting": "FL-FedProx",
+      "auc": 0.8532343545100831,
+      "f1": 0.38195604678061945,
+      "precision": 0.40734649122807015,
+      "recall": 0.35954512460682314,
+      "privacy": "Gradients",
+      "data_sharing": "Weights only"
+    },
+    {
+      "setting": "FL-FedNova",
+      "auc": 0.8882458337063848,
+      "f1": 0.46078050045377933,
+      "precision": 0.4963687150837989,
+      "recall": 0.4299540285506896,
+      "privacy": "Gradients",
+      "data_sharing": "Weights only"
+    },
+    {
+      "setting": "Local-Only (~fedprox)",
+      "auc": 0.853234355571522,
+      "f1": null,
+      "precision": null,
+      "recall": null,
+      "privacy": "N/A",
+      "data_sharing": "None (no sharing)"
+    }
+  ]
+}

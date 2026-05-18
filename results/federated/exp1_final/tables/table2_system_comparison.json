@@ -1,0 +1,49 @@
+{
+  "rows": [
+    {
+      "setting": "Centralized XGBoost Fusion",
+      "auc": null,
+      "f1": null,
+      "precision": null,
+      "recall": null,
+      "privacy": "None",
+      "data_sharing": "Full data pooled",
+      "source": null
+    },
+    {
+      "setting": "FL-Best (FEDAVG)",
+      "auc": 0.9289685971710424,
+      "f1": 0.5965701433792522,
+      "precision": 0.7118416638711842,
+      "recall": 0.5134285022985725,
+      "privacy": "Weights",
+      "data_sharing": "Model updates only",
+      "source": "/kaggle/working/fl-results/fedavg/summary.json"
+    },
+    {
+      "setting": "FL-FEDAVG",
+      "auc": 0.9289685971710424,
+      "f1": 0.5965701433792522,
+      "precision": 0.7118416638711842,
+      "recall": 0.5134285022985725,
+      "privacy": "Weights",
+      "data_sharing": "Model updates only",
+      "source": "/kaggle/working/fl-results/fedavg/summary.json"
+    },
+    {
+      "setting": "Local-Only (true mean)",
+      "auc": 0.8044424625021501,
+      "f1": 0.27596331331261154,
+      "precision": 0.26296472543581284,
+      "recall": 0.2910718606339221,
+      "privacy": "Local",
+      "data_sharing": "None",
+      "source": "/kaggle/working/fl-results/local_only/summary.json"
+    }
+  ],
+  "notes": {
+    "centralized_source": null,
+    "local_only_is_true_baseline": true,
+    "local_only_instruction": "Set RUN_LOCAL_ONLY_BASELINE=True in this cell to generate local-only results."
+  }
+}

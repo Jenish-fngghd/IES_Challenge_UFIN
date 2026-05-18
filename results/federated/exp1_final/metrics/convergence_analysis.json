@@ -1,0 +1,13 @@
+{
+  "FEDAVG": {
+    "rounds_to_80%": 1,
+    "rounds_to_82%": 3,
+    "rounds_to_84%": 6,
+    "rounds_to_86%": 9,
+    "rounds_to_90%": 36,
+    "final_auc": 0.9289685971710424,
+    "peak_auc": 0.9289685971710424,
+    "avg_time_s": 85.77418270829605,
+    "total_rounds": 146
+  }
+}

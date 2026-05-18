@@ -1,0 +1,26 @@
+{
+  "auc_recon": 0.7364141356700415,
+  "threshold": 0.9546622037887573,
+  "f1": 0.6808801421347547,
+  "precision": 0.7823492462311558,
+  "recall": 0.6027098959593515,
+  "specificity": 0.9939197192366747,
+  "accuracy": 0.9802299590205574,
+  "recon_error": {
+    "normal_mean": 1.5375813245773315,
+    "normal_std": 3.6141602993011475,
+    "fraud_mean": 3.1508140563964844,
+    "fraud_std": 5.576499938964844,
+    "separation_ratio": 2.049201488494873
+  },
+  "model_config": {
+    "input_dim": 263,
+    "hidden_dims": [
+      200,
+      128
+    ],
+    "latent_dim": 64,
+    "noise_factor": 0.15,
+    "total_params": 621320
+  }
+}

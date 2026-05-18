@@ -1,0 +1,32 @@
+{
+  "FedAvg": {
+    "rounds_to_80%": 2,
+    "rounds_to_82%": 3,
+    "rounds_to_84%": 4,
+    "rounds_to_86%": 8,
+    "final_auc": 0.8875010931493832,
+    "peak_auc": 0.8875010931493832,
+    "avg_time_s": 85.73027304410934,
+    "total_rounds": 20
+  },
+  "FedProx": {
+    "rounds_to_80%": 2,
+    "rounds_to_82%": 4,
+    "rounds_to_84%": 11,
+    "rounds_to_86%": ">20",
+    "final_auc": 0.8532343545100831,
+    "peak_auc": 0.8532343545100831,
+    "avg_time_s": 121.73638459444047,
+    "total_rounds": 20
+  },
+  "FedNova": {
+    "rounds_to_80%": 2,
+    "rounds_to_82%": 3,
+    "rounds_to_84%": 5,
+    "rounds_to_86%": 8,
+    "final_auc": 0.8858508698518289,
+    "peak_auc": 0.8882458337063848,
+    "avg_time_s": 87.6305661201477,
+    "total_rounds": 20
+  }
+}

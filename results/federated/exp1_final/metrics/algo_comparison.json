@@ -1,0 +1,23 @@
+{
+  "fedavg": {
+    "best_auc": 0.9289685971710424,
+    "final_f1": 0.5965701433792522,
+    "best_round": 146,
+    "optimal_threshold": 0.9399999999999996,
+    "lr_schedule": {
+      "initial": {
+        "lr": 0.001,
+        "dae_pretrain_lr": 0.001,
+        "dae_finetune_lr": 0.0005
+      },
+      "final": {
+        "lr": 1e-06,
+        "dae_pretrain_lr": 1e-06,
+        "dae_finetune_lr": 5e-07
+      },
+      "events": [],
+      "patience": 5,
+      "factor": 0.5
+    }
+  }
+}

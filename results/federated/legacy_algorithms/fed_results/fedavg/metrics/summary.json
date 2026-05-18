@@ -1,0 +1,24 @@
+{
+  "algorithm": "fedavg",
+  "best_auc": 0.8875010931493832,
+  "best_round": 20,
+  "total_rounds": 20,
+  "personalized_aucs": {
+    "NationalBank_A": 0.8875010931493832,
+    "RegionalBank_B": 0.8875010931493832,
+    "FintechPay_C": 0.8875010931493832
+  },
+  "optimal_threshold": 0.9099999999999996,
+  "final_metrics": {
+    "auc": 0.8875010931493832,
+    "f1": 0.4737638748738648,
+    "precision": 0.49486166007905136,
+    "recall": 0.45439148318412775,
+    "tp": 1878,
+    "fp": 1917,
+    "tn": 112058,
+    "fn": 2255,
+    "n_val": 118108,
+    "threshold": 0.9099999999999996
+  }
+}

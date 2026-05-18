@@ -1,0 +1,23 @@
+{
+  "auc_pr_baseline": 0.65921,
+  "auc_pr_rlhf": 0.65921,
+  "f2_baseline": 0.2028,
+  "f2_rlhf": 0.475315,
+  "fnr_baseline": 0.83039,
+  "fnr_rlhf": 0.568594,
+  "precision_at_recall_90_baseline": 0.162914,
+  "precision_at_recall_90_rlhf": 0.162914,
+  "dollar_value_caught_baseline": 84539.25,
+  "dollar_value_caught_rlhf": 265059.0,
+  "threshold_std": 0.109605,
+  "review_queue_max": 10,
+  "final_threshold": 0.5,
+  "baseline_threshold": 0.868,
+  "confusion_rlhf": {
+    "TP": 1783,
+    "FP": 441,
+    "FN": 2350,
+    "TN": 113534
+  },
+  "validation_passed": true
+}

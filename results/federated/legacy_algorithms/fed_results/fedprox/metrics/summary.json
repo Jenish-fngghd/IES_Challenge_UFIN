@@ -1,0 +1,24 @@
+{
+  "algorithm": "fedprox",
+  "best_auc": 0.8532343545100831,
+  "best_round": 20,
+  "total_rounds": 20,
+  "personalized_aucs": {
+    "NationalBank_A": 0.853234355571522,
+    "RegionalBank_B": 0.853234355571522,
+    "FintechPay_C": 0.853234355571522
+  },
+  "optimal_threshold": 0.9199999999999996,
+  "final_metrics": {
+    "auc": 0.853234355571522,
+    "f1": 0.38195604678061945,
+    "precision": 0.40734649122807015,
+    "recall": 0.35954512460682314,
+    "tp": 1486,
+    "fp": 2162,
+    "tn": 111813,
+    "fn": 2647,
+    "n_val": 118108,
+    "threshold": 0.9199999999999996
+  }
+}

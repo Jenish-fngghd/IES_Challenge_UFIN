@@ -1,279 +1,198 @@
-# U-FIN: A Federated Generative Learning with RL-Tuned Dual-Stream Networks (TCN-GAT) for Real-Time Financial Fraud Detection
+# U-FIN: Federated Heterogeneous-Encoder Fusion with RL-Adaptive Thresholding for Financial Fraud Detection
 
-> **Paper:** [Include full citation after publication]  
-> **Dataset:** [IEEE-CIS Fraud Detection](https://www.kaggle.com/competitions/ieee-fraud-detection/data) (Kaggle)  
-> **Results:** AUC 0.9607 | F1 0.7557 | Accuracy 0.9844 | Specificity 0.9951
+U-FIN is a research prototype for financial fraud detection on the IEEE-CIS Fraud Detection dataset. The framework combines temporal, relational, causal, and distributional transaction evidence through a heterogeneous multi-encoder architecture, fuses the learned representations with Gated Attention Fusion, and uses an XGBoost meta-learner for final fraud classification. The project also evaluates the system under a simulated federated multi-institution setting and studies DDQN-based adaptive thresholding under delayed feedback.
 
----
+The repository is organized to support the paper results, reviewer validation, and future reproducibility.
 
-## Overview
+![Final U-FIN architecture](./assets/figures/Final_Architecture.png)
 
-U-FIN is a multi-model fraud detection framework that combines heterogeneous deep learning encoders through a novel Gated Attention Fusion (GAF) mechanism. The architecture consists of:
+## Highlights
 
-- **Temporal Stream — TCN**: Temporal Convolutional Network capturing longitudinal behavioral patterns from sequential transaction data
-- **Graph Stream — GAT**: Graph Attention Network encoding relational structure within and across account neighborhoods
-- **Graph Stream — CaT-GNN**: Causal Temporal GNN applying causal intervention to suppress spurious graph correlations
-- **Gated Attention Fusion (GAF)**: Per-sample adaptive weighting of all three 64-dimensional encoder outputs
-- **XGBoost Meta-Learner**: Final classifier trained on the 327-dimensional fused + tabular feature vector
+- **Unified multi-encoder fraud model:** TCN, GAT, CaT-GNN, and DAE learn complementary transaction representations.
+- **Gated Attention Fusion:** per-sample gate weights combine temporal, graph, causal, and anomaly signals into a 64-dimensional fused embedding.
+- **XGBoost meta-learner:** the fused embedding is appended to the original tabular features for final classification.
+- **Federated evaluation:** FedAvg+FedBN is evaluated on a simulated three-client non-IID split over unique `card1` values.
+- **DDQN threshold control:** adaptive thresholding is studied under delayed feedback and compared against static threshold sweeps.
 
-The system is further extended with:
-- **GA-GAN**: Generative Attention GAN (VAE generator + CNN-Attention discriminator) for class-imbalance augmentation
-- **DQN-RL + RLHF**: Deep Q-Network agent for adaptive decision routing with analyst-in-the-loop feedback
-- **Federated Learning**: FedAvg with differential privacy across Banks, Fintechs, and Payment Platforms
+## Architecture Overview
 
----
+U-FIN contains four parallel encoders:
 
-## Architecture
+| Component | Signal Captured | Output |
+|---|---|---|
+| FraudTCN | temporal transaction behaviour and velocity patterns | 64-d embedding |
+| FraudGAT | relational graph structure across shared cards, devices, emails, and identities | 64-d embedding |
+| CaT-GNN | causal-temporal graph evidence and robustness to spurious correlations | 64-d embedding |
+| ImprovedDAE | distributional anomaly signal learned from benign transactions | 64-d embedding |
 
-![U-FIN Architecture](Final_Architecture.png)
+The four embeddings are projected into a common fusion space and combined by a neural gating network. The resulting Gated Attention Fusion embedding is concatenated with the original tabular features and passed to XGBoost for the final fraud probability.
 
-The three-tier architecture diagram shows:
-- **Top tier**: Federated training across institutions (Banks, Fintechs, Payment Platforms) with FedAvg aggregation
-- **Middle tier**: Dual-stream encoding → Gated Attention Fusion → XGBoost → DQN Decision Engine
-- **Bottom tier**: GA-GAN (VAE + CNN-Attention) for synthetic fraud augmentation
+For a detailed explanation of the model design, see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
----
+## Main Results
+
+### Centralized, Federated, and Local-Only Comparison
+
+| Setting | AUC | F1 | Precision | Recall |
+|---|---:|---:|---:|---:|
+| Centralized U-FIN | 0.9637 | 0.7880 | 0.8568 | 0.7295 |
+| Federated FedAvg+FedBN | 0.9290 | 0.5966 | 0.7118 | 0.5134 |
+| Local-only mean | 0.8044 | 0.2760 | 0.2630 | 0.2911 |
+
+The centralized model is treated as the pooled-data upper bound. The federated experiment uses a simulated non-IID three-client split because IEEE-CIS does not provide real institution identifiers. FedAvg+FedBN improves over local-only training by **12.45 AUC points**, retains **96.39%** of centralized AUC, and shares only model updates rather than pooled raw transaction data.
+
+Canonical result files:
+
+- Centralized fusion: [`results/centralized/results_final_fusion_valSet/metrics/fusion_metrics.json`](results/centralized/results_final_fusion_valSet/metrics/fusion_metrics.json)
+- Federated FedAvg+FedBN: [`results/federated/exp1_final/metrics/fl_final_metrics.json`](results/federated/exp1_final/metrics/fl_final_metrics.json)
+- Local-only baseline: [`results/federated/exp1_final/local_only/metrics/summary.json`](results/federated/exp1_final/local_only/metrics/summary.json)
+
+### DDQN Threshold-Control Comparison
+
+The DDQN module adjusts the decision threshold over frozen XGBoost scores. The static-threshold ablation is included to separate threshold calibration effects from the adaptive DDQN policy.
+
+| Method | Threshold | FNR | F2 | Caught value |
+|---|---:|---:|---:|---:|
+| XGBoost static | 0.868 | 0.8304 | 0.2028 | \$84,539 |
+| Static threshold | 0.500 | 0.5921 | 0.4540 | \$246,355 |
+| DDQN adaptive | 0.500 | 0.5686 | 0.4753 | \$265,059 |
+| Static oracle sweep | 0.300 | 0.4955 | 0.5420 | \$312,698 |
+
+`Caught value` is the sum of `TransactionAmt` for fraudulent validation transactions flagged or escalated by the policy. It is a dataset-level proxy, not real-world recovered revenue.
+
+Canonical files:
+
+- DDQN report: [`results/rlhf/Readme.md`](results/rlhf/Readme.md)
+- Static threshold comparison: [`results/rlhf/metrics/static_threshold_comparison.json`](results/rlhf/metrics/static_threshold_comparison.json)
+- Static threshold figure: [`results/rlhf/figures/static_threshold_comparison.png`](results/rlhf/figures/static_threshold_comparison.png)
 
 ## Repository Structure
 
+```text
+IES_Challenge_UFIN/
+├── assets/
+│   └── figures/                  # architecture and supporting figures
+├── docs/                         # architecture and federated-learning notes
+├── notebooks/
+│   ├── final/                    # final experiment notebooks
+│   │   └── RLHF/                 # DDQN scripts and threshold comparison
+│   ├── eda/                      # exploratory analysis notebooks
+│   └── legacy/                   # earlier baseline notebooks
+├── models/                       # trained model artifacts and scalers
+│   ├── centralized/              # TCN, GAT, CaT-GNN, DAE, fusion/XGBoost
+│   ├── federated/                # FedAvg+FedBN and local-only pipelines
+│   └── rlhf/                     # DDQN policy model
+├── results/
+│   ├── centralized/              # TCN, GAT, CaT-GNN, DAE, and fusion outputs
+│   ├── federated/exp1_final/     # canonical FedAvg+FedBN experiment outputs
+│   └── rlhf/                     # DDQN and static-threshold outputs
 ```
-U-FIN/
-│
-├── Final_notebooks/
-│   ├── training_tcn.ipynb          # Notebook 1: TCN temporal encoder
-│   ├── training_gat.ipynb          # Notebook 2: GAT graph encoder
-│   ├── training_catgnn.ipynb       # Notebook 3: CaT-GNN causal graph encoder
-│   └── training_fusion.ipynb       # Notebook 4: Gated Fusion + XGBoost (full pipeline)
-│
-├── Final_Architecture.png            # Full system architecture diagram
-├── README.md                         # This file
-│
-└── data/                             # Create this folder manually (see Dataset section)
-    ├── train_transaction.csv         # Download from Kaggle
-    ├── train_identity.csv            # Download from Kaggle
-    ├── test_transaction.csv          # Download from Kaggle
-    └── test_identity.csv             # Download from Kaggle
-```
-
----
 
 ## Dataset
 
-The IEEE-CIS Fraud Detection dataset is hosted on Kaggle and **cannot be redistributed**. To obtain it:
+This project uses the IEEE-CIS Fraud Detection dataset from Kaggle. The dataset is not redistributed here. If you want to rerun the notebooks locally, create a `data/` folder at the repository root and place the files there using the original filenames:
 
-1. Create a Kaggle account at [kaggle.com](https://www.kaggle.com)
-2. Accept the competition rules at: [https://www.kaggle.com/competitions/ieee-fraud-detection](https://www.kaggle.com/competitions/ieee-fraud-detection)
-3. Download the four files: `train_transaction.csv`, `train_identity.csv`, `test_transaction.csv`, `test_identity.csv`
-4. Place all four files in a `data/` folder in the repository root
-
-**Dataset statistics:**
-| Split | Transactions | Fraud Rate |
-|-------|-------------|------------|
-| Train | 590,540 | 3.5% |
-| Test  | 506,691 | Unknown (Kaggle submission) |
-
-**Alternatively**, if running on Kaggle:
-```python
-# Default Kaggle paths used in the notebooks
-TRAIN_TRANSACTION = '/kaggle/input/ieee-fraud-detection/train_transaction.csv'
-TRAIN_IDENTITY    = '/kaggle/input/ieee-fraud-detection/train_identity.csv'
-TEST_TRANSACTION  = '/kaggle/input/ieee-fraud-detection/test_transaction.csv'
-TEST_IDENTITY     = '/kaggle/input/ieee-fraud-detection/test_identity.csv'
+```text
+data/
+├── train_transaction.csv
+├── train_identity.csv
+├── test_transaction.csv
+├── test_identity.csv
+└── sample_submission.csv
 ```
 
----
+The experiments use `TransactionDT` for time-aware splitting and preserve the native class imbalance of the dataset. The validation split contains 118,108 samples.
 
-## Requirements
+## Environment
 
-### Python Version
-Python 3.10 or higher recommended.
+The notebooks were developed in a Python notebook environment with the following main libraries:
 
-### Install Dependencies
+- Python 3.x
+- NumPy, pandas, scikit-learn
+- PyTorch
+- TensorFlow/Keras
+- XGBoost
+- Matplotlib, seaborn
+- Jupyter Notebook or JupyterLab
+
+A minimal local setup can be created with:
 
 ```bash
-pip install -r requirements.txt
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install numpy pandas scikit-learn matplotlib seaborn jupyter xgboost torch tensorflow
 ```
 
-Or install manually:
+Graph-library installation can vary by CUDA/CPU environment, so install the graph backend required by the GAT/CaT-GNN notebooks according to your local setup.
 
-```bash
-# Core data science
-pip install numpy pandas scikit-learn matplotlib seaborn
+## Reproducing the Experiments
 
-# Deep learning — TensorFlow (TCN)
-pip install tensorflow==2.15.0
-pip install keras-tcn
+The final notebooks are organized in the approximate execution order below. Some notebooks load artifacts produced by previous stages, so running them in sequence is recommended.
 
-# Deep learning — PyTorch + DGL (GAT, CaT-GNN, Fusion)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install dgl -f https://data.dgl.ai/wheels/repo.html
+1. `notebooks/final/experimnet_tcn.ipynb`
+2. `notebooks/final/experiment_gat.ipynb`
+3. `notebooks/final/experiment_catgnn.ipynb`
+4. `notebooks/final/experiment_dae.ipynb`
+5. `notebooks/final/experiment_fusion.ipynb`
+6. `notebooks/final/experiment_federated.ipynb`
+7. `notebooks/final/RLHF/experiment_rlhf.py`
+8. `notebooks/final/RLHF/static_threshold_comparison.py`
 
-# Gradient boosting
-pip install xgboost==3.2.0
+The final federated result used in the paper is stored under:
 
-# Utilities
-pip install pickle5 tqdm
+```text
+results/federated/exp1_final/
 ```
 
-### Hardware
-| Notebook | Minimum | Recommended |
-|----------|---------|-------------|
-| TCN | 8 GB RAM, CPU | 16 GB RAM + GPU |
-| GAT | 16 GB RAM + GPU | 32 GB RAM + A100 |
-| CaT-GNN | 16 GB RAM + GPU | 32 GB RAM + A100 |
-| Fusion | 16 GB RAM + GPU | 32 GB RAM + A100 |
+The final centralized fusion result used in the paper is stored under:
 
-All notebooks were developed and validated on **Kaggle** (P100 GPU, 16 GB VRAM, 30 GB RAM).
-
----
-
-## Running Order
-
-The notebooks must be run **in order** as each produces model weights consumed by the next.
-
-### Step 1 — TCN (Temporal Encoder)
+```text
+results/centralized/results_final_fusion_valSet/
 ```
-Final_notebooks/training_tcn.ipynb
-```
-- Trains a Temporal Convolutional Network on the 263-feature tabular dataset
-- **Outputs**: `v2_updated_configuration_200ep/models/tcn_fraud_best_model.weights.h5`, `tcn_scaler.pkl`
-- **Results**: AUC 0.9688, F1 0.4806, Precision 0.3289, Recall 0.8918
 
-### Step 2 — GAT (Graph Encoder)
-```
-Final_notebooks/training_gat.ipynb
-```
-- Constructs a GTAN-style transaction graph (4 relation types: uid, card1, P_emaildomain, DeviceInfo)
-- Trains a 2-layer Graph Attention Network (4 heads → 1 head, 64-d output)
-- **Outputs**: `gat_results/models/gat_best.pt`, `gat_results/models/classifier_best.pt`
-- **Results**: AUC 0.9374, F1 0.6288, Precision 0.6877, Recall 0.5792
+## Paper-Ready Figures
 
-### Step 3 — CaT-GNN (Causal Graph Encoder)
-```
-Final_notebooks/training_catgnn.ipynb
-```
-- Trains a Causal Temporal GNN with causal inspector + causal intervener modules on the same graph
-- **Outputs**: `catgnn_results/models/catgnn_best.pt`, `catgnn_results/models/classifier_best.pt`
-- **Results**: AUC 0.9503, F1 0.6783, Precision 0.7142, Recall 0.6458
+The available architecture and supporting figures are stored in [`assets/figures`](assets/figures). Additional experiment figures are stored next to their corresponding outputs under `results/`.
 
-### Step 4 — Gated Attention Fusion + XGBoost (Full Pipeline)
-```
-Final_notebooks/training_fusion.ipynb
-```
-- Loads all three trained models and extracts embeddings
-- Trains Gated Attention Fusion (GAF) combining TCN + GAT + CaT-GNN embeddings
-- Trains and tunes XGBoost meta-learner on 327-d feature vector (64 fused + 263 tabular)
-- Runs full test set evaluation and saves `submission.csv`
-- **Outputs**: `fusion_results/models/fusion_best.pt`, `fusion_results/models/xgb_fusion_tuned.json`
-- **Results**: AUC 0.9607, F1 0.7557, Accuracy 0.9844, Precision 0.8362, Recall 0.6893
+- Final architecture: `assets/figures/Final_Architecture.png`
+- Gate weights: `assets/figures/fig_gate_weights.png`
+- DAE reconstruction: `assets/figures/fig_dae_reconstruction.png`
+- Fusion analysis: `results/centralized/results_final_fusion_valSet/figures/fusion_analysis.png`
+- XGBoost evaluation: `results/centralized/results_final_fusion_valSet/figures/xgb_evaluation_plots.png`
+- RLHF comparison: `results/rlhf/figures/rlhf_evaluation.png`
+- RLHF threshold trajectory: `results/rlhf/figures/threshold_trajectory.png`
 
----
+## Federated Learning Notes
 
-## Results
+The federated setup is a simulated multi-institutional evaluation. Since IEEE-CIS does not contain real institution IDs, unique `card1` values are partitioned into three disjoint clients. This keeps transactions sharing the same card identifier within one simulated institution and creates a card-based non-IID split.
 
-### Ablation Study — Marginal Gain of Each Component
+FedAvg+FedBN is used as the canonical FL result. FedAvg performs sample-weighted aggregation of shared parameters, while FedBN keeps BatchNorm statistics local to reduce the effect of heterogeneous client distributions.
 
-| Added Component | ΔAUC | ΔF₁ | ΔPrecision |
-|-----------------|------|-----|------------|
-| Graph relations (TCN → GAT) | −0.031 | +0.148 | +0.359 |
-| Causal filtering (GAT → CaT-GNN) | +0.013 | +0.049 | +0.026 |
-| Adaptive fusion (CaT-GNN → GAF) | <+0.001 | — | — |
-| Tabular meta-learner (GAF → Full) | +0.010 | +0.078 | +0.122 |
+## DDQN Notes
 
-### Final Model Performance (Validation Set, 118,108 transactions)
+The DDQN layer is a threshold controller, not a score generator. It operates on frozen XGBoost fraud scores and adjusts the decision threshold under delayed feedback. The reviewer-safe interpretation is:
 
-| Metric | Score |
-|--------|-------|
-| AUC-ROC | 0.9607 |
-| F1-Score | 0.7557 |
-| Accuracy | 0.9844 |
-| Precision | 0.8362 |
-| Recall | 0.6893 |
-| Specificity | 0.9951 |
-| Optimal Threshold | 0.9122 |
+- Static threshold lowering explains most of the FNR improvement.
+- DDQN provides an additional adaptive gain at the same operating point.
+- DDQN is useful as a closed-loop controller when labels arrive with delay and score distributions may drift.
 
-### Gate Weight Analysis (Average per Class)
+## Large Files and GitHub
 
-| Class | TCN Weight | GAT Weight | CaT-GNN Weight |
-|-------|-----------|-----------|----------------|
-| All samples | 0.2395 | 0.4751 | 0.2854 |
-
-The GAT stream receives the highest average weight (0.475), confirming that graph-relational signals are the dominant discriminator for fraud detection in this dataset.
-
----
-
-## Key Hyperparameters
-
-### TCN
-| Parameter | Value |
-|-----------|-------|
-| Sequence length | 20 |
-| Feature dimensions | 14 (263 → pad to 280 → reshape 20×14) |
-| Dense units | [128, 64, 32] |
-| Embedding dim | 64 |
-
-### GAT
-| Parameter | Value |
-|-----------|-------|
-| Graph relations | 4 (uid, card1, P_emaildomain, DeviceInfo) |
-| Attention heads (L1) | 4 |
-| Attention heads (L2) | 1 |
-| Hidden/output dim | 64 |
-| Max group size | 5000 |
-
-### CaT-GNN
-| Parameter | Value |
-|-----------|-------|
-| GNN layers | 1 |
-| Hidden dim | 64 |
-| Causal fraction | Learned |
-| Batch size | 2048 |
-
-### Gated Attention Fusion
-| Parameter | Value |
-|-----------|-------|
-| Projection dim | 128 |
-| Gate network | 384→128→3 (softmax) |
-| Output dim | 64 |
-| Training epochs | 100 |
-| Loss | Focal Loss (α=0.25, γ=2.0) |
-
-### XGBoost Meta-Learner
-| Parameter | Value |
-|-----------|-------|
-| Input features | 327 (64 fused + 263 tabular) |
-| Max depth | 6 |
-| N estimators | 500 |
-| Learning rate | 0.05 |
-| Scale pos weight | 27 |
-| Tree method | hist |
-
----
+Raw data, trained model binaries, arrays, and compressed artifacts are ignored by `.gitignore` because they can be large and may be restricted by dataset licenses. If these artifacts need to be versioned, use Git LFS or provide external download links.
 
 ## Citation
 
-If you use this code or findings in your research, please cite:
+If you use this repository, please cite the associated paper. A BibTeX entry can be added here after publication.
 
 ```bibtex
-@article{ufin2025,
-  title     = {U-FIN: A Federated Generative Learning with RL-Tuned Dual-Stream Networks (TCN-GAT) for Real-Time Financial Fraud Detection},
-  author    = {[Authors]},
-  journal   = {[Journal/Conference]},
-  year      = {2025},
+@article{ufin2026,
+  title  = {U-FIN: Federated Heterogeneous-Encoder Fusion with RL-Adaptive Thresholding for Financial Fraud Detection},
+  author = {Sorathiya, Jenish and Patel, Krish and Patel, Jainee and Patel, Banshari and Pandya, Aayush and Trivedi, Himani},
+  year   = {2026},
+  note   = {Manuscript under review}
 }
 ```
 
----
-
 ## License
 
-This code is released for academic use. The IEEE-CIS Fraud Detection dataset is subject to [Kaggle's competition rules](https://www.kaggle.com/competitions/ieee-fraud-detection/rules) and cannot be redistributed.
-
----
-
-## Acknowledgements
-
-- IEEE-CIS Fraud Detection dataset provided by Vesta Corporation via Kaggle
-- Graph construction methodology adapted from GTAN (Graph Transformer Network for fraud detection)
-- TCN implementation via [keras-tcn](https://github.com/philipperemy/keras-tcn)
-- GNN implementation via [DGL (Deep Graph Library)](https://www.dgl.ai/)
+This repository is intended for academic research. Add a formal license file before public release if the code or artifacts are to be reused by others.

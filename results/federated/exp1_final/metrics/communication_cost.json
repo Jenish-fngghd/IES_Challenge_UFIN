@@ -1,0 +1,11 @@
+{
+  "FEDAVG": {
+    "algo": "FEDAVG",
+    "rounds": 146,
+    "upload_mb": 2312.6680320000005,
+    "download_mb": 2312.6680320000005,
+    "total_mb": 4625.336064000001
+  },
+  "model_mb": 5.280064,
+  "total_params": 1320016
+}

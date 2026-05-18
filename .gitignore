@@ -1,0 +1,11 @@
+# Dataset files are downloaded locally and are not redistributed.
+data/
+
+# Python/Jupyter local state.
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db

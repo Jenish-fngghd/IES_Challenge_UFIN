@@ -1,0 +1,66 @@
+{
+  "setting": "local_only_true",
+  "mean_auc": 0.8044424625021501,
+  "mean_f1": 0.27596331331261154,
+  "mean_precision": 0.26296472543581284,
+  "mean_recall": 0.2910718606339221,
+  "clients": [
+    {
+      "client_id": "NationalBank_A",
+      "institution_type": "bank",
+      "n_samples": 176982,
+      "fraud_rate": 0.03770440071821213,
+      "optimal_threshold": 0.8699999999999996,
+      "metrics": {
+        "auc": 0.808097273657045,
+        "f1": 0.2903819604233778,
+        "precision": 0.27681509102873436,
+        "recall": 0.30534720541979193,
+        "tp": 1262,
+        "fp": 3297,
+        "tn": 110678,
+        "fn": 2871,
+        "n_val": 118108,
+        "threshold": 0.8699999999999996
+      }
+    },
+    {
+      "client_id": "RegionalBank_B",
+      "institution_type": "bank",
+      "n_samples": 147182,
+      "fraud_rate": 0.032279763370752335,
+      "optimal_threshold": 0.8899999999999996,
+      "metrics": {
+        "auc": 0.8017712634206344,
+        "f1": 0.2693528960910982,
+        "precision": 0.246,
+        "recall": 0.2976046455359303,
+        "tp": 1230,
+        "fp": 3770,
+        "tn": 110205,
+        "fn": 2903,
+        "n_val": 118108,
+        "threshold": 0.8899999999999996
+      }
+    },
+    {
+      "client_id": "FintechPay_C",
+      "institution_type": "fintech",
+      "n_samples": 148268,
+      "fraud_rate": 0.0344376415014267,
+      "optimal_threshold": 0.8999999999999996,
+      "metrics": {
+        "auc": 0.8034588504287709,
+        "f1": 0.26815508342335853,
+        "precision": 0.26607908527870416,
+        "recall": 0.27026373094604406,
+        "tp": 1117,
+        "fp": 3081,
+        "tn": 110894,
+        "fn": 3016,
+        "n_val": 118108,
+        "threshold": 0.8999999999999996
+      }
+    }
+  ]
+}
