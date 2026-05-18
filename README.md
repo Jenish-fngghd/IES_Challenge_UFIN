@@ -176,10 +176,6 @@ The DDQN layer is a threshold controller, not a score generator. It operates on 
 - DDQN provides an additional adaptive gain at the same operating point.
 - DDQN is useful as a closed-loop controller when labels arrive with delay and score distributions may drift.
 
-## Large Files and GitHub
-
-Raw data, trained model binaries, arrays, and compressed artifacts are ignored by `.gitignore` because they can be large and may be restricted by dataset licenses. If these artifacts need to be versioned, use Git LFS or provide external download links.
-
 ## Citation
 
 If you use this repository, please cite the associated paper. A BibTeX entry can be added here after publication.
