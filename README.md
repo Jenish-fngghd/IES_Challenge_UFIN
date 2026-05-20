@@ -188,7 +188,3 @@ If you use this repository, please cite the associated paper. A BibTeX entry can
   note   = {Manuscript under review}
 }
 ```
-
-## License
-
-This repository is intended for academic research. Add a formal license file before public release if the code or artifacts are to be reused by others.
